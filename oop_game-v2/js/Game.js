@@ -31,7 +31,7 @@
     */
     getRandomPhrase() {
         return (this.phrases[Math.floor(this.phrases.length * Math.random())]);
-    };
+    }
 
     /**
     * Begins game by selecting a random phrase and displaying it to user
@@ -41,8 +41,7 @@
         overlayDiv.style.display = 'none';
         this.activePhrase = this.getRandomPhrase();
         this.activePhrase.addPhraseToDisplay();
-        console.log(this.activePhrase);
-    };
+    }
 
     /**
     * Checks for winning move
@@ -55,7 +54,7 @@
             return true;
         }
         return false;
-    };
+    }
 
     /**
     * Increases the value of the missed property
@@ -63,23 +62,22 @@
     * Checks if player has remaining lives and ends game if player is out
     */
     removeLife() {
+        this.missed++;
+        let noMoreHearts = true;
         const hearts = document.querySelectorAll('img');
-        console.log(hearts + ' ' + hearts.length);
         for (let i = 0; i < hearts.length; i++) {
-            console.log(hearts[i].src);
             if (hearts[i].alt === 'Heart Icon') {
+                noMoreHearts = false;
                 hearts[i].alt = "Lost Heart Icon";
-                hearts[i].src === '../images/lostHeart.png';
-                console.log(hearts[i].src + ", " + hearts[i].alt);
-                this.missed++;
+                hearts[i].src = 'images/lostHeart.png';
                 break;
             }
         }
 
-        if (this.missed >= 5) {
+        if (noMoreHearts) {
             this.gameOver(false);
         }
-    };
+    }
 
     /**
     * Displays game over message
@@ -88,15 +86,38 @@
     gameOver(gameWon) {
         const overlayDiv = document.getElementById('overlay');
         overlayDiv.style.display = '';
+        overlayDiv.className = 'start';
         const h1 = document.getElementById('game-over-message');
         if (gameWon) {
             h1.textContent = 'Congratulations!  You win!';
-            overlayDiv.className = 'win';
+            overlayDiv.classList.add('win');
         }
         else {
             h1.textContent = 'Sorry.  You lost.  Try again.';
-            overlayDiv.className = 'lose';
+            overlayDiv.classList.add('lose');
         }
+    }
 
+    /**
+    * Handles onscreen keyboard button clicks
+    * @param (HTMLButtonElement) button - The clicked button element
+    */
+    handleInteraction(button) {
+        const char = button.textContent;
+        button.disabled = true;
+
+        if (!this.activePhrase.checkLetter(char)) {
+            button.classList.add('wrong');
+            this.removeLife();
+        }
+        else {
+            button.classList.add('chosen');
+            this.activePhrase.showMatchedLetter(char);
+
+            if (this.checkForWin()){
+                this.gameOver(true);
+            }
+        }
+        
     };
 }
