@@ -63,18 +63,16 @@
     */
     removeLife() {
         this.missed++;
-        let noMoreHearts = true;
         const hearts = document.querySelectorAll('img');
         for (let i = 0; i < hearts.length; i++) {
             if (hearts[i].alt === 'Heart Icon') {
-                noMoreHearts = false;
                 hearts[i].alt = "Lost Heart Icon";
                 hearts[i].src = 'images/lostHeart.png';
                 break;
             }
         }
 
-        if (noMoreHearts) {
+        if (this.missed >= 5) {
             this.gameOver(false);
         }
     }
